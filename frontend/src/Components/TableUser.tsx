@@ -1,10 +1,10 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Mail, Phone, Globe, Building2, MapPin } from 'lucide-react';
+import { Mail, Phone, Building2, MapPin } from 'lucide-react';
 
 interface User {
   id: number;
@@ -31,13 +31,9 @@ export const TableUser = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const hasFetched = useRef(false);
-
   const url = 'https://jsonplaceholder.typicode.com/users';
 
   useEffect(() => {
-    if (hasFetched.current) return;
-
     const fetchUsers = async () => {
       try {
         setLoading(true);
@@ -51,8 +47,6 @@ export const TableUser = () => {
         // fetch(url)
         //   .then((res) => res.json())
         //   .then((data) => setUsers(data));
-
-        hasFetched.current = true;
       } catch (error) {
         console.error('Error fetching users:', error);
         setError('Impossible de charger les utilisateurs');
@@ -62,7 +56,7 @@ export const TableUser = () => {
     };
 
     fetchUsers();
-  }, [users]);
+  }, []);
 
   if (loading) {
     return (
