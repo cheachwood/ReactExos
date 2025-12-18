@@ -6,6 +6,7 @@ import { TableUser } from './components/TableUser';
 import { InputEffect } from './components/InputEffect';
 import Timer from './components/Timer';
 import Compteur from './components/Compteur';
+import Toggle from './components/Toggle';
 
 const queryClient = new QueryClient();
 
@@ -16,6 +17,7 @@ function App() {
         <>
           <div className="min-h-screen bg-slate-950 flex flex-col items-center gap-6 py-8">
             <Compteur />
+            <Toggle />
             <Timer />
             <InputEffect />
             <TableUser />
