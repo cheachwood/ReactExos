@@ -48,6 +48,7 @@ export const TableUser = () => {
         //   .then((res) => res.json())
         //   .then((data) => setUsers(data));
       } catch (error) {
+        // eslint-disable-next-line no-console
         console.error('Error fetching users:', error);
         setError('Impossible de charger les utilisateurs');
       } finally {

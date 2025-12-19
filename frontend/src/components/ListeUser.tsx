@@ -24,6 +24,7 @@ export const ListeUser = () => {
         const response = await axios.get(url);
         setUsers(response.data);
       } catch (error) {
+        // eslint-disable-next-line no-console
         console.error('Error fetching users:', error);
       } finally {
         setLoading(false);

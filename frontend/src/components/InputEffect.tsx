@@ -8,7 +8,6 @@ export const InputEffect = () => {
   };
 
   useEffect(() => {
-    console.log('Valeur de changeur modifiée :', changeur);
     document.title = changeur || 'Titre par défaut';
   }, [changeur]);
 
