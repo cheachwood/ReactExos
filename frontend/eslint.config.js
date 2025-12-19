@@ -16,9 +16,9 @@ export default defineConfig([
     },
     overrides: [
       {
-        files: ['src/Components/ui/**/*.{ts,tsx}'],
+        files: ['**/*.ts'], // Plus besoin de la clé "overrides"
         rules: {
-          'react-refresh/only-export-components': 'off',
+          'no-console': 'error',
         },
       },
     ],
