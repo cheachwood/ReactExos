@@ -4,21 +4,17 @@ on:
   workflow_dispatch:
     inputs:
       environment:
-        description: 'Environnement de déploiement'
+        description: 'Environnement de déploiement manuel'
         required: true
         default: 'staging'
         type: choice
         options:
           - staging
           - production
-      debug_mode:
-        description: 'Activer le mode debug ?'
-        required: false
-        type: boolean
   push:
     branches: [main, develop]
     paths:
-      - 'frontend/**' # Ne se déclenche que si frontend change
+      - 'frontend/**'
   pull_request:
     branches: [main]
     paths:
@@ -42,27 +38,35 @@ jobs:
       - run: npm run lint
       - run: npm run build
 
-      # Sauvegarde du build pour les jobs suivants
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
         with:
           name: production-dist
           path: frontend/dist/
-          retention-days: 1 # On le garde peu de temps pour économiser l'espace
+          retention-days: 1
 
-  deploy:
-    needs: build-and-test # Le déploiement attend que le build soit fini
-    if: github.event_name == 'workflow_dispatch'
+  deploy-staging:
+    needs: build-and-test
+    # Déclencheur : Soit un push sur develop, soit un choix manuel 'staging'
+    if: |
+      (github.event_name == 'push' && github.ref == 'refs/heads/develop') ||
+      (github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'staging')
     runs-on: ubuntu-latest
-    environment: ${{ github.event.inputs.environment }} # Utilise les environnements GitHub
-
+    environment: staging
     steps:
-      - name: Download Build Artifact
-        uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v4
         with:
           name: production-dist
+      - run: echo "🛠️ Déploiement automatique ou manuel vers STAGING"
 
-      - name: Deploy to Server
-        run: |
-          echo "🚀 Déploiement en cours sur : ${{ github.event.inputs.environment }}"
-          # Ici tu mettrais ton script rsync, ssh, ou firebase deploy
+  deploy-production:
+    needs: build-and-test
+    # Déclencheur : UNIQUEMENT via le bouton manuel avec le choix 'production'
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'production'
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: production-dist
+      - run: echo "🚀 Déploiement MANUEL vers PRODUCTION (Sécurité maximale)"
