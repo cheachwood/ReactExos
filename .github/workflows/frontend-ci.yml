@@ -27,40 +27,42 @@ on:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
-
-    # Important : définir le répertoire de travail
     defaults:
       run:
         working-directory: ./frontend
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v5
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v5
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
           node-version: '22'
           cache: 'npm'
           cache-dependency-path: './frontend/package-lock.json'
 
-      - name: Install dependencies
-        run: npm ci
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run build
 
-      - name: Run linter
-        run: npm run lint
-        continue-on-error: true # N'arrête pas si le linting échoue
+      # Sauvegarde du build pour les jobs suivants
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: production-dist
+          path: frontend/dist/
+          retention-days: 1 # On le garde peu de temps pour économiser l'espace
 
-      # Cette étape s'exécute TOUJOURS
-      - name: Build application
-        run: npm run build
+  deploy:
+    needs: build-and-test # Le déploiement attend que le build soit fini
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }} # Utilise les environnements GitHub
 
-      # Cette étape ne s'exécute que si on choisit "staging"
-      - name: Deploy to Staging
-        if: github.event.inputs.environment == 'staging'
-        run: echo "Déploiement de l'application en recette"
+    steps:
+      - name: Download Build Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: production-dist
 
-      # Cette étape ne s'exécute que si on choisit "production"
-      - name: Deploy to Production
-        if: github.event.inputs.environment == 'production'
-        run: echo "Déploiement de l'application en recette"
+      - name: Deploy to Server
+        run: |
+          echo "🚀 Déploiement en cours sur : ${{ github.event.inputs.environment }}"
+          # Ici tu mettrais ton script rsync, ssh, ou firebase deploy
