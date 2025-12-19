@@ -51,9 +51,16 @@ jobs:
         run: npm run lint
         continue-on-error: true # N'arrête pas si le linting échoue
 
+      # Cette étape s'exécute TOUJOURS
       - name: Build application
         run: npm run build
 
-    # Si tu as des tests configurés
-    # - name: Run tests
-    #   run: npm test -- --watchAll=false
+      # Cette étape ne s'exécute que si on choisit "staging"
+      - name: Deploy to Staging
+        if: github.event.inputs.environment == 'staging'
+        run: echo "Déploiement de l'application en recette"
+
+      # Cette étape ne s'exécute que si on choisit "production"
+      - name: Deploy to Production
+        if: github.event.inputs.environment == 'production'
+        run: echo "Déploiement de l'application en recette"
