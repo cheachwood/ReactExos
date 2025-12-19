@@ -7,6 +7,7 @@ import { InputEffect } from './components/InputEffect';
 import Timer from './components/Timer';
 import Compteur from './components/Compteur';
 import Toggle from './components/Toggle';
+import SquareColor from './components/SquareColor';
 
 const queryClient = new QueryClient();
 
@@ -16,6 +17,7 @@ function App() {
       <QueryClientProvider client={queryClient}>
         <>
           <div className="min-h-screen bg-slate-950 flex flex-col items-center gap-6 py-8">
+            <SquareColor />
             <Compteur />
             <Toggle />
             <Timer />
