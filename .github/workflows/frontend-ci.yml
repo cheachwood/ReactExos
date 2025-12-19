@@ -2,6 +2,19 @@ name: Frontend CI
 
 on:
   workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environnement de déploiement'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - staging
+          - production
+      debug_mode:
+        description: 'Activer le mode debug ?'
+        required: false
+        type: boolean
   push:
     branches: [main, develop]
     paths:
