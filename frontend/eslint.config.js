@@ -4,15 +4,12 @@ import reactHooks from 'eslint-plugin-react-hooks';
 import reactRefresh from 'eslint-plugin-react-refresh';
 import tseslint from 'typescript-eslint';
 
-export default tseslint.config(
-  // 1. Ignores globaux
-  { ignores: ['dist'] },
-
-  // 2. Configuration de base (remplace le "extends")
+export default tseslint(
+  { ignores: ['dist', 'node_modules'] },
   js.configs.recommended,
   ...tseslint.configs.recommended,
 
-  // 3. Configuration spécifique pour React et TypeScript
+  // 1. CONFIGURATION GÉNÉRALE
   {
     files: ['**/*.{ts,tsx}'],
     plugins: {
@@ -30,14 +27,17 @@ export default tseslint.config(
     rules: {
       ...reactHooks.configs.recommended.rules,
       'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
+      'no-console': 'error',
     },
   },
 
-  // 4. Vos règles spécifiques (ce qui était dans "overrides")
+  // 2. EXCEPTION CIBLÉE (doit être après pour gagner la priorité)
   {
-    files: ['**/*.ts'],
+    // On cible très précisément les fichiers qui posent problème
+    files: ['src/components/ui/badge.tsx', 'src/components/ui/button.tsx'],
     rules: {
-      'no-console': 'error',
+      // On éteint complètement la règle pour ces fichiers spécifiques
+      'react-refresh/only-export-components': 'off',
     },
   }
 );
