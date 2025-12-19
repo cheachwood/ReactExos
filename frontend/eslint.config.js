@@ -4,12 +4,15 @@ import reactHooks from 'eslint-plugin-react-hooks';
 import reactRefresh from 'eslint-plugin-react-refresh';
 import tseslint from 'typescript-eslint';
 
-export default tseslint(
+export default [
+  // 1. Ignores globaux
   { ignores: ['dist', 'node_modules'] },
+
+  // 2. Base de règles (on étale les configs recommandées)
   js.configs.recommended,
   ...tseslint.configs.recommended,
 
-  // 1. CONFIGURATION GÉNÉRALE
+  // 3. Ta configuration principale
   {
     files: ['**/*.{ts,tsx}'],
     plugins: {
@@ -31,13 +34,11 @@ export default tseslint(
     },
   },
 
-  // 2. EXCEPTION CIBLÉE (doit être après pour gagner la priorité)
+  // 4. Le correctif pour tes warnings (shadcn)
   {
-    // On cible très précisément les fichiers qui posent problème
-    files: ['src/components/ui/badge.tsx', 'src/components/ui/button.tsx'],
+    files: ['src/components/ui/*.tsx'],
     rules: {
-      // On éteint complètement la règle pour ces fichiers spécifiques
       'react-refresh/only-export-components': 'off',
     },
-  }
-);
+  },
+];
