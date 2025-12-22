@@ -15,7 +15,7 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest
 
-    # Important : définir le répertoire de travail backend
+    # Important : définir le répertoire de travail
     defaults:
       run:
         working-directory: ./backend
